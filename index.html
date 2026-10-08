@@ -40,13 +40,13 @@ button.alt:active:not(:disabled){box-shadow:0 1px 0 #231c4a}
 @keyframes live{50%{filter:brightness(1.2)}}
 
 #game{display:grid;grid-template-columns:minmax(0,640px) 1fr;gap:18px;align-items:start}
-@media(max-width:840px){#game{grid-template-columns:1fr}h1{font-size:24px}.sub{font-size:12px}}
+#bw{position:relative}
 canvas{width:100%;height:auto;border-radius:20px;border:4px solid #4b4180;box-shadow:0 14px 40px #000a;touch-action:manipulation;display:block}
 .panel{padding:16px;display:grid;gap:12px}
 .room{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 14px;border-radius:14px;background:#150f2c99}
 .room small{flex:none}.room b{flex:1;font:700 26px Fredoka,sans-serif;letter-spacing:5px;color:#ffd36b}
 
-/* jugadores */
+/* jugadores (perfil) */
 #seats{display:grid;gap:8px}
 .seat{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;border:2px solid transparent;background:#150f2c99;transition:.25s}
 .seat.on{border-color:var(--c);box-shadow:0 0 18px -2px var(--c);transform:scale(1.02)}
@@ -55,11 +55,12 @@ canvas{width:100%;height:auto;border-radius:20px;border:4px solid #4b4180;box-sh
 .seat.talk .av{box-shadow:0 0 0 3px #fff9,0 0 0 7px var(--c);animation:talk .5s infinite alternate}
 @keyframes talk{to{transform:scale(1.1)}}
 .nm{display:grid;line-height:1.15;min-width:0;flex:1}
-.nm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm b,.nm small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nm small{font-size:12px}
 .pips{display:flex;gap:3px;flex:none}
 .pips i{width:9px;height:9px;border-radius:50%;background:#ffffff22;border:1px solid #fff4}
 .pips i.d{background:#ffd36b;border-color:#ffd36b}
+.act{width:38px;height:38px;padding:0;font-size:20px;border-radius:11px;flex:none;box-shadow:0 3px 0 #231c4a;line-height:1}
 .kick{padding:5px 10px;font-size:13px;border-radius:9px;background:#5b2a3a;color:#ffb3b3;box-shadow:0 3px 0 #3a1624;flex:none}
 .seat.off .kick{background:#e8403f;color:#fff;box-shadow:0 3px 0 #8f2323}
 
@@ -69,18 +70,32 @@ canvas{width:100%;height:auto;border-radius:20px;border:4px solid #4b4180;box-sh
 #tbar{height:100%;width:100%;border-radius:6px;background:var(--ac)}
 #tbar.hot{background:#ff4040!important}
 #tnum{font:700 16px Fredoka,sans-serif;width:22px;text-align:right}
-#dice{width:96px;height:96px;margin:2px auto;border-radius:22px;background:linear-gradient(145deg,#fff,#d9d2ea);border:5px solid #888;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 0 #0004,0 14px 24px #0006;user-select:none}
+
+/* dado: vive dentro del tablero, en la casa de quien juega */
+#dice{position:absolute;left:50%;top:50%;translate:-50% -50%;width:13%;aspect-ratio:1;z-index:5;container-type:inline-size;transition:left .45s ease,top .45s ease;
+border-radius:22%;background:linear-gradient(145deg,#fff,#d9d2ea);border:4px solid #888;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 0 #0004,0 10px 18px #0006;user-select:none;-webkit-tap-highlight-color:transparent}
 #dice.ready{animation:glow 1s infinite alternate}
-@keyframes glow{to{box-shadow:0 8px 0 #0004,0 0 34px 8px #ffd36b}}
-#pips{display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);width:70px;height:70px}
-#pips i{width:15px;height:15px;border-radius:50%;margin:auto;background:transparent}
+@keyframes glow{to{box-shadow:0 6px 0 #0004,0 0 28px 8px #ffd36b}}
+#pips{display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);width:74%;height:74%}
+#pips i{width:68%;aspect-ratio:1;border-radius:50%;margin:auto;background:transparent}
 #pips i.on{background:radial-gradient(circle at 35% 30%,#555,#111)}
-#dem{font-size:50px}
+#dem{font-size:50cqw;line-height:1}
+#roll{display:none!important}
 #msg{color:var(--mut);min-height:22px;text-align:center}
 small{color:var(--mut)}
-.pack{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pack button{padding:10px;font-size:16px}
 #hint{text-align:center;font-size:13px}
+
+@media(max-width:840px){
+ body{padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+ #hdr{margin-bottom:8px}h1{font-size:22px}.logo{width:38px;height:38px;font-size:22px}.sub{display:none}
+ .ib{width:40px;height:40px}.ib svg{width:20px;height:20px}
+ #game{display:flex;flex-direction:column;gap:8px}
+ .panel{display:contents}
+ #st{order:1;font-size:17px;min-height:0}#tbox{order:2}#start,#again{order:2}#bw{order:3}#msg{order:4;min-height:0}#seats{order:5;gap:6px}.room{order:6}
+ .seat{padding:6px 8px}.av{width:32px;height:32px;font-size:16px}.act{width:36px;height:36px}
+ canvas{border-width:3px;border-radius:14px}
+ #hint{display:none}
+}
 
 /* hoja inferior (regalos / emojis / reglas) */
 #sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
@@ -134,22 +149,20 @@ canvas.shake{animation:shake .6s}
 </section>
 
 <section id="game" hidden>
-  <canvas id="cv" width="750" height="750" aria-label="Tablero de Ludo"></canvas>
+  <div id="bw">
+    <canvas id="cv" width="750" height="750" aria-label="Tablero de Ludo"></canvas>
+    <div id="dice" role="button" aria-label="Tirar dado"><div id="pips"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="dem">🎲</div></div>
+  </div>
   <div class="panel">
     <div class="room"><small>Sala</small><b id="code"></b><button class="ib sm alt" id="copy" type="button" title="Copiar enlace para invitar" aria-label="Copiar enlace para invitar"></button></div>
     <div id="seats"></div>
     <div id="st"></div>
     <div id="tbox"><div id="tb"><div id="tbar"></div></div><span id="tnum"></span></div>
-    <div id="dice" role="button" aria-label="Tirar dado"><div id="pips"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="dem">🎲</div></div>
     <div id="msg"></div>
     <button id="roll" disabled>Tirar dado</button>
     <button id="start" hidden>Empezar partida</button>
     <button id="again" class="alt" hidden>Jugar otra vez</button>
-    <div class="pack">
-      <button id="bGift" class="alt" type="button">🎁 Regalos</button>
-      <button id="bEmo" class="alt" type="button">😜 Emojis</button>
-    </div>
-    <small id="hint">Para hablar activa el micrófono. Para escuchar no necesitas hacer nada.</small>
+    <small id="hint">Toca 😜 en tu perfil para mandar emojis y 🎁 en el de tus amigos para regalarles algo. Para hablar activa el micrófono.</small>
   </div>
 </section>
 </main>
@@ -191,7 +204,7 @@ const IP={mic:'<path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"/>
 const icon=(n,slash)=>`<svg viewBox="0 0 24 24" aria-hidden="true">${IP[n]}${slash?'<path d="M4 4l16 16"/>':''}</svg>`;
 function lab(el,t){el.title=t;el.setAttribute('aria-label',t)}
 
-/* ---------- Audio profesional (sintetizado, sin archivos) ---------- */
+/* ---------- Audio (sintetizado, sin archivos) ---------- */
 let AC,MG,MUS,REV,snd=true,musOn=false;
 function initAudio(){
   if(AC){AC.state=='suspended'&&AC.resume();return}
@@ -219,18 +232,51 @@ const SFX={
   rattle:()=>{noise(.03,.16,1800+Math.random()*1800,0,'bandpass');tone(300+Math.random()*200,.03,'square',.03)},
   land:()=>{tone(150,.2,'sine',.45,55);noise(.07,.3,1400)},
   hop:()=>{const f=760+Math.random()*120;tone(f,.07,'triangle',.2,f*.7);tone(f*1.5,.04,'sine',.06)},
-  cap:()=>{noise(.5,.35,300,2500,'bandpass');tone(500,.45,'sawtooth',.14,60);tone(90,.4,'sine',.4,40,.05)},
+  /* comida: golpe + silbido + trombón triste */
+  cap:()=>{noise(.5,.35,300,2500,'bandpass');tone(500,.45,'sawtooth',.14,60);tone(90,.4,'sine',.4,40,.05);tone(1400,.25,'square',.06,300,.02);
+    [392,349,311,262].forEach((f,i)=>tone(f,.2,'triangle',.13,f*.9,.45+i*.2))},
   turn:()=>{tone(784,.18,'sine',.16);tone(1175,.3,'sine',.16,0,.11)},
   warn:()=>tone(1000,.07,'square',.07),
   join:()=>{tone(523,.12,'triangle',.14);tone(784,.2,'triangle',.14,0,.09)},
   leave:()=>{tone(784,.12,'triangle',.12);tone(523,.2,'triangle',.12,0,.09)},
   fin:()=>[523,659,784,1047,1319].forEach((f,i)=>{tone(f,.28,'triangle',.18,0,i*.07);tone(f*2,.12,'sine',.05,0,i*.07)}),
   throw:()=>{noise(.35,.14,500,3000,'bandpass');tone(300,.35,'sine',.08,900)},
-  win:()=>{[[523,659,784],[587,740,880],[659,784,988],[784,988,1175,1568]].forEach((ch,i)=>ch.forEach(f=>tone(f,.5,'triangle',.11,0,i*.22)))}};
+  pop:()=>{noise(.35,.26,4000,500);tone(1200+Math.random()*800,.22,'sine',.07,300);tone(200,.2,'sine',.25,60)},
+  /* victoria: fanfarria + aplausos */
+  win:()=>{[[523,659,784],[587,740,880],[659,784,988],[784,988,1175,1568]].forEach((ch,i)=>ch.forEach(f=>tone(f,.5,'triangle',.11,0,i*.22)));
+    [1047,1319,1568,2093].forEach((f,i)=>tone(f,.3,'square',.05,0,1+i*.12));
+    for(let i=0;i<14;i++)noise(.06,.2,2200,0,'bandpass',1+i*.09+Math.random()*.05)}};
 const IMP={splash:()=>{noise(.5,.35,5000,800)},boom:()=>{noise(.9,.55,600,80);tone(120,.7,'sawtooth',.3,30);tone(60,.8,'sine',.5,30)},
  splat:()=>{noise(.18,.4,900,300);tone(220,.18,'sine',.3,60)},
  frost:()=>{[1400,1900,2600].forEach((f,i)=>tone(f,.3,'triangle',.08,f*1.4,i*.05));noise(.25,.1,6000)},
  fire:()=>{noise(.8,.3,1800,400)},love:()=>[784,988,1319,1568].forEach((f,i)=>tone(f,.25,'triangle',.14,0,i*.08))};
+/* sonido propio de cada emoji, según la emoción que representa */
+const N=(f,d,t,v,to,dl)=>tone(f,d,t||'sine',v||.14,to||0,dl||0);
+const laugh=()=>[0,1,2,3,4,5].forEach(i=>{N(620-i*35,.08,'square',.07,400-i*20,i*.1);noise(.05,.06,2500,0,'bandpass',i*.1)});
+const ESND={
+ '😂':laugh,'🤣':laugh,
+ '😡':()=>{N(140,.6,'sawtooth',.2,70);N(147,.6,'sawtooth',.15,75);noise(.5,.22,900,200)},
+ '😭':()=>[0,1,2,3].forEach(i=>{N(760-i*70,.26,'sine',.16,640-i*70,i*.3);N(1140-i*100,.2,'sine',.05,0,i*.3)}),
+ '😎':()=>{N(196,.18,'triangle',.2);N(247,.18,'triangle',.2,0,.14);N(392,.5,'sine',.18,0,.3);N(98,.5,'sine',.3,0,.3)},
+ '🥳':()=>{noise(.25,.2,3000,6000,'highpass');N(400,.4,'sawtooth',.08,800);[523,659,784,1047,1319].forEach((f,i)=>N(f,.16,'triangle',.15,0,.15+i*.06))},
+ '😱':()=>{N(900,.8,'sawtooth',.1,2300);N(1350,.8,'square',.05,3300);noise(.6,.12,3000,6000,'highpass')},
+ '🤯':()=>{N(200,.5,'sawtooth',.12,1800);noise(.9,.4,600,60,'lowpass',.5);N(80,.8,'sine',.5,30,.5)},
+ '😏':()=>{N(311,.28,'triangle',.18,415);N(415,.34,'triangle',.18,311,.24)},
+ '🥺':()=>{N(988,.25,'sine',.15,1175);N(1047,.45,'sine',.12,880,.26)},
+ '😴':()=>[0,1].forEach(i=>{noise(.7,.18,300,120,'lowpass',i*.9);N(90,.7,'sine',.2,70,i*.9)}),
+ '🤔':()=>{N(330,.2,'triangle',.18);N(311,.2,'triangle',.18,0,.22);N(440,.5,'triangle',.18,540,.45)},
+ '🙄':()=>{N(300,.5,'sine',.18,900);N(900,.35,'sine',.15,300,.5)},
+ '😈':()=>{N(196,1,'sawtooth',.1,185);N(233,1,'sawtooth',.08);N(294,1,'sawtooth',.06);[0,1,2].forEach(i=>N(330-i*30,.15,'square',.05,0,.5+i*.2))},
+ '🤡':()=>{N(300,.09,'square',.2,500);N(500,.09,'square',.2,300,.11);N(400,.55,'sine',.15,1700,.25)},
+ '👏':()=>[0,1,2,3,4,5,6,7].forEach(i=>noise(.06,.3,2200,0,'bandpass',i*.12+(i%2)*.02)),
+ '❤️':()=>IMP.love(),
+ '🔥':()=>IMP.fire(),
+ '💀':()=>{N(220,.3,'sawtooth',.14,110);N(165,.4,'sawtooth',.14,70,.28);noise(.05,.3,1500,0,'bandpass',.75);noise(.05,.3,1800,0,'bandpass',.83)},
+ '👍':()=>{N(523,.12,'triangle',.18);N(784,.32,'triangle',.18,0,.1)},
+ '👎':()=>{N(300,.45,'sawtooth',.14,140);N(150,.5,'square',.07,100,.1)},
+ '🙏':()=>{[523,659,784].forEach(f=>N(f,1.3,'sine',.1));N(1568,1,'sine',.04,0,.1)},
+ '😇':()=>[1047,1319,1568,2093].forEach((f,i)=>N(f,.9,'sine',.07,0,i*.12)),
+ '😬':()=>{N(466,.6,'sawtooth',.07);N(493,.6,'sawtooth',.07);noise(.45,.12,5000,0,'highpass')}};
 /* música ambiental suave (opcional) */
 const CH=[[220,261.63,329.63],[174.61,220,261.63],[130.81,164.81,196],[196,246.94,293.66]];
 let mi=0,mt=0,mIv=0;
@@ -438,23 +484,30 @@ function posP(c,i,p){
   if(p<=50){const[r,k]=T[(ST[c]+p)%52];return[k+.5,r+.5]}
   if(p<56){const[r,k]=H[c][p-51];return[k+.5,r+.5]}
   const d=DIR[c],o=(i-1.5)*.22;return[7.5+d[0]*.8-d[1]*o,7.5+d[1]*.8+d[0]*o]}
-const V=[0,1,2,3].map(c=>[0,1,2,3].map(i=>{const[x,y]=posP(c,i,-1);return{x,y,q:[],wait:0,lp:-1,hop:0,seg:0}}));
-const P=[];let seen=false,lastRoll=0,lastTurn=-1,won=false,rolling=false,shown=0,lastTk=-1,tStart=0,lastSec=-1;
+const V=[0,1,2,3].map(c=>[0,1,2,3].map(i=>{const[x,y]=posP(c,i,-1);return{x,y,q:[],wait:0,lp:-1,hop:0,seg:0,big:0}}));
+const P=[],RG=[],PT=[];let seen=false,lastRoll=0,lastTurn=-1,won=false,rolling=false,shown=0,lastTk=-1,tStart=0,lastSec=-1,WT=0,FW=0;
 function burst(x,y,col,n=20){for(let i=0;i<n;i++){const a=Math.random()*6.28,sp=2+Math.random()*4;P.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2,l:1,c:col,s:.07+Math.random()*.1})}}
 function confetti(){for(let i=0;i<160;i++)P.push({x:Math.random()*15,y:-Math.random()*6,vx:Math.random()*2-1,vy:1+Math.random()*3,l:3,c:COL[i%4],s:.12})}
+function firework(){const x=2+Math.random()*11,y=1.5+Math.random()*6,c=Math.random()<.4?'#ffd36b':COL[Math.random()*4|0];burst(x,y,c,36);burst(x,y,'#fff',10);SFX.pop()}
+/* impacto cuando te comen: ondas, chispas, texto y temblor */
+function crash(x,y,c){
+  RG.push({x,y,a:0,l:.6,c:'#fff'},{x,y,a:-.12,l:.75,c:COL[c]});
+  burst(x,y,COL[c],26);burst(x,y,'#ffd23f',18);burst(x,y,'#fff',10);
+  PT.push({x,y:y-.5,t:'¡COMIDA!',c:'#ffd23f',a:0,l:1.4,rot:(Math.random()-.5)*.3});
+  shake();SFX.cap()}
 function diff(){
   for(let c=0;c<4;c++)for(let i=0;i<4;i++){
     const p=S.pcs[c][i],v=V[c][i];if(v.lp===p)continue;
     if(!seen){[v.x,v.y]=posP(c,i,p)}
     else if(p>v.lp&&v.lp>=0&&p-v.lp<=6)for(let k=v.lp+1;k<=p;k++)v.q.push(posP(c,i,k));
-    else{v.q.push(posP(c,i,p));if(p<0){v.wait=.8;setTimeout(()=>{burst(v.x,v.y,COL[c]);SFX.cap()},800)}}
+    else{v.q.push(posP(c,i,p));if(p<0){v.big=1;if(/comió/.test(S.msg)){v.wait=.75;const ox=v.x,oy=v.y;setTimeout(()=>crash(ox,oy,c),750)}}}
     v.lp=p}
   if(seen&&S.roll!==lastRoll&&S.roll>0)rollAnim(S.dice,S.turn);
   lastRoll=S.roll;
   if(S.tk!==lastTk){lastTk=S.tk;tStart=performance.now();lastSec=-1}
   if(S.phase=='roll'&&S.turn!=lastTurn&&seen&&S.turn==me)SFX.turn();
   lastTurn=S.turn;
-  if(S.phase=='over'&&!won){won=true;confetti();SFX.win()}if(S.phase!='over')won=false;
+  if(S.phase=='over'&&!won){won=true;WT=0;FW=0;confetti();SFX.win()}if(S.phase!='over'){won=false;WT=0}
   if(S.phase=='lobby')shown=0;
   seen=true;
 }
@@ -462,11 +515,16 @@ function update(dt){
   for(let c=0;c<4;c++)for(let i=0;i<4;i++){const v=V[c][i];
     if(v.wait>0){v.wait-=dt;continue}
     if(!v.q.length){v.hop=0;continue}
-    const[tx,ty]=v.q[0],dx=tx-v.x,dy=ty-v.y,d=Math.hypot(dx,dy),step=(v.q.length>2?11:8)*dt;
+    const[tx,ty]=v.q[0],dx=tx-v.x,dy=ty-v.y,d=Math.hypot(dx,dy),step=(v.big?13:v.q.length>2?11:8)*dt;
     if(!v.seg)v.seg=d||1;
-    if(d<=step){v.x=tx;v.y=ty;v.q.shift();v.seg=0;v.hop=0;if(S.pcs[c][i]>=0){SFX.hop();if(!v.q.length&&v.lp==56){SFX.fin();burst(tx,ty,'#ffd36b',26)}}}
-    else{v.x+=dx/d*step;v.y+=dy/d*step;v.hop=Math.sin(Math.PI*(1-d/v.seg))*.45}}
+    if(d<=step){v.x=tx;v.y=ty;v.q.shift();v.seg=0;v.hop=0;
+      if(S.pcs[c][i]>=0){SFX.hop();if(!v.q.length&&v.lp==56){SFX.fin();burst(tx,ty,'#ffd36b',26)}}
+      else if(v.big&&!v.q.length){v.big=0;burst(tx,ty,'#fff',10);burst(tx,ty,COL[c],8);SFX.land()}}
+    else{v.x+=dx/d*step;v.y+=dy/d*step;v.hop=Math.sin(Math.PI*(1-d/v.seg))*(v.big?2.6:.45)}}
   fxUpdate(dt);
+  if(S.phase=='over'){WT+=dt;
+    if(WT<5&&Math.random()<.7)P.push({x:Math.random()*15,y:-.5,vx:Math.random()*2-1,vy:1+Math.random()*2,l:3,c:COL[Math.random()*4|0],s:.1});
+    if(WT<9&&(FW-=dt)<=0){FW=.3+Math.random()*.35;firework()}}
   for(let k=P.length-1;k>=0;k--){const p=P[k];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=9*dt;p.l-=dt*1.1;if(p.l<=0)P.splice(k,1)}
 }
 function face(n){document.querySelectorAll('#pips i').forEach((e,k)=>e.classList.toggle('on',({1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]}[n]||[]).includes(k)));
@@ -486,7 +544,7 @@ function timerUI(){
   if(sec!==lastSec){lastSec=sec;if(S.turn==me&&sec<=3&&sec>0&&el>0)SFX.warn()}
 }
 
-/* ---------- Regalos y emociones (dentro de paquetes) ---------- */
+/* ---------- Regalos y emociones ---------- */
 const GIFTS={water:{e:'💦',n:'Agua',c:'#5ac8ff',st:'drip',s:'splash'},bomb:{e:'💣',n:'Bomba',c:'#ff9d2e',st:'burn',s:'boom'},
  egg:{e:'🥚',n:'Huevo',c:'#ffffff',c2:'#ffb300',st:'splat',s:'splat'},tomato:{e:'🍅',n:'Tomate',c:'#d32f2f',c2:'#8e1b1b',st:'splat',s:'splat'},
  pie:{e:'🥧',n:'Pastel',c:'#fff1d0',c2:'#f2c8a0',st:'splat',s:'splat'},snow:{e:'❄️',n:'Nieve',c:'#dff3ff',st:'frost',s:'frost'},
@@ -502,7 +560,7 @@ const sendFx=(k,to)=>isHost?hostFx(me,{k,to}):conn&&conn.send({t:'fx',k,to});
 function playFx(f,to,k){const G=GIFTS[k];
   if(G){const[a,b]=ctr(f),[x,y]=ctr(to);PJ.push({a,b,x:x+(Math.random()-.5)*90,y:y+(Math.random()-.5)*90,k,t:0,to});SFX.throw();
     TO.t=S.seats[f]+' le lanzó '+G.e+' a '+S.seats[to];TO.l=3.5}
-  else{const[x,y]=ctr(f);FL.push({x,y:y-40,e:k,l:2.8,a:0});tone(660+Math.random()*300,.12,'triangle',.1,1200)}}
+  else{const[x,y]=ctr(f);FL.push({x,y:y-95,e:k,l:2.8,a:0});(ESND[k]||(()=>tone(660,.12,'triangle',.1,1200)))()}}
 function impact(p){const G=GIFTS[p.k],u=1/SZ;IMP[G.s]();burst(p.x*u,p.y*u,G.c,28);
   if(G.s=='boom'){burst(p.x*u,p.y*u,'#ffd23f',34);burst(p.x*u,p.y*u,'#555',22);shake()}
   if(G.st=='love')for(let i=0;i<8;i++)FL.push({x:p.x+(Math.random()-.5)*170,y:p.y,e:'💖',l:2.5+Math.random(),a:-i*.09});
@@ -513,6 +571,8 @@ function fxUpdate(dt){
     P.push({x:x/SZ,y:y/SZ,vx:Math.random()-.5,vy:Math.random()-.5,l:.5,c:GIFTS[p.k].c,s:.07});if(p.t>=1){PJ.splice(k,1);impact(p)}}
   ST2.forEach(s=>{s.age+=dt;s.life-=dt});for(let k=ST2.length-1;k>=0;k--)if(ST2[k].life<=0)ST2.splice(k,1);
   FL.forEach(f=>f.a+=dt);for(let k=FL.length-1;k>=0;k--)if(FL[k].a>FL[k].l)FL.splice(k,1);
+  RG.forEach(r=>r.a+=dt);for(let k=RG.length-1;k>=0;k--)if(RG[k].a>RG[k].l)RG.splice(k,1);
+  PT.forEach(p=>p.a+=dt);for(let k=PT.length-1;k>=0;k--)if(PT[k].a>PT[k].l)PT.splice(k,1);
   TO.l-=dt}
 const rn=(s,j)=>{const v=Math.sin(s*12.9898+j*78.233)*43758.5453;return v-Math.floor(v)};
 function drawStains(t){
@@ -532,11 +592,29 @@ function drawStains(t){
 }
 function drawFx(){
   g.textAlign='center';g.textBaseline='middle';
+  RG.forEach(r=>{if(r.a<0)return;const u=r.a/r.l;g.save();g.globalAlpha=1-u;g.strokeStyle=r.c;g.lineWidth=9*(1-u)+1;g.beginPath();g.arc(r.x*SZ,r.y*SZ,(.3+u*3.2)*SZ,0,7);g.stroke();g.restore()});
   PJ.forEach(p=>{const[x,y]=pjPos(p),u=Math.min(1,p.t);g.save();g.translate(x,y);g.rotate(u*14);const sc=1+Math.sin(Math.PI*u)*.6;g.scale(sc,sc);g.font='54px serif';g.fillText(GIFTS[p.k].e,0,0);g.restore()});
   FL.forEach(f=>{if(f.a<0)return;const u=f.a/f.l,sc=f.a<.3?f.a/.3*1.3:1.3-.3*Math.min(1,(f.a-.3)/.3);
     g.globalAlpha=u>.7?(1-u)/.3:1;g.font=(66*sc)+'px serif';g.fillText(f.e,f.x+Math.sin(f.a*8)*6,f.y-f.a*45)});g.globalAlpha=1;
+  PT.forEach(p=>{const u=p.a/p.l,sc=p.a<.15?p.a/.15*1.4:1.4-.4*Math.min(1,(p.a-.15)/.2);
+    g.save();g.globalAlpha=u>.6?(1-u)/.4:1;g.translate(p.x*SZ,p.y*SZ-p.a*40);g.rotate(p.rot);g.scale(sc,sc);
+    g.font='700 46px Fredoka,sans-serif';g.lineJoin='round';g.lineWidth=9;g.strokeStyle='#000c';g.strokeText(p.t,0,0);g.fillStyle=p.c;g.fillText(p.t,0,0);g.restore()});
   if(TO.l>0){g.globalAlpha=Math.min(1,TO.l);g.font='700 22px Fredoka,sans-serif';const w=Math.min(700,g.measureText(TO.t).width+40);
     g.fillStyle='#000c';g.beginPath();g.roundRect(375-w/2,698,w,42,21);g.fill();g.fillStyle='#fff';g.fillText(TO.t,375,719,680);g.globalAlpha=1}
+}
+/* pantalla de victoria: rayos giratorios, trofeo saltarín y fuegos artificiales */
+function drawWin(t){
+  const w=Math.min(1,WT/.7),e=1-Math.pow(1-w,3),pop=w<1?1+Math.sin(w*Math.PI)*.2:1,col=COL[S.win];
+  g.save();g.globalAlpha=.5*e;g.fillStyle='#000';g.fillRect(0,0,750,750);
+  g.translate(375,375);g.rotate(t*.35);g.globalAlpha=.28*e;g.fillStyle=col;
+  for(let k=0;k<12;k++){g.rotate(Math.PI/6);g.beginPath();g.moveTo(0,0);g.arc(0,0,560,-.13,.13);g.closePath();g.fill()}
+  g.restore();
+  g.save();g.translate(375,375);g.scale(e*pop,e*pop);g.globalAlpha=e;
+  g.shadowColor=col;g.shadowBlur=40;g.fillStyle='#1a1436ee';g.beginPath();g.roundRect(-320,-115,640,230,34);g.fill();g.shadowBlur=0;g.lineWidth=6;g.strokeStyle=col;g.stroke();
+  g.textAlign='center';g.textBaseline='middle';g.font='90px serif';g.fillText('🏆',0,-58-Math.abs(Math.sin(t*4))*16);
+  g.font='700 54px Fredoka,sans-serif';g.lineJoin='round';g.lineWidth=8;g.strokeStyle='#000b';g.strokeText(S.seats[S.win],0,36,560);g.fillStyle=col;g.fillText(S.seats[S.win],0,36,560);
+  g.font='500 24px Fredoka,sans-serif';g.fillStyle='#ffe9b0';g.fillText('¡Es el campeón de Ludo!',0,86);
+  g.restore();
 }
 
 /* ---------- Dibujo ---------- */
@@ -549,8 +627,9 @@ function board(){
     gr.addColorStop(0,on?COL[c]:'#3a3463');gr.addColorStop(1,on?SHD[c]:'#2b2548');x.fillStyle=gr;x.fillRect(q*s,o*s,6*s,6*s);
     if(on){x.fillStyle='#fff8ec';x.beginPath();x.roundRect((q+.7)*s,(o+.7)*s,4.6*s,4.6*s,24);x.fill();
       BS.forEach(([r,kk])=>{x.beginPath();x.arc((q+kk+.5)*s,(o+r+.5)*s,s*.44,0,7);x.fillStyle=COL[c]+'30';x.fill();x.lineWidth=3;x.strokeStyle=COL[c]+'90';x.stroke()});
-      x.fillStyle=SHD[c];x.font='700 17px Fredoka,Trebuchet MS,sans-serif';x.fillText(S.seats[c],(q+3)*s,(o+2.85)*s,100);
-      if(S.off[c]||S.auto[c]){x.font='500 13px Fredoka,sans-serif';x.fillText(S.off[c]?'🔌 sin conexión':'🤖 automático',(q+3)*s,(o+3.25)*s,100)}
+      x.fillStyle='#fff';x.shadowColor='#0009';x.shadowBlur=4;x.font='700 18px Fredoka,Trebuchet MS,sans-serif';x.fillText(S.seats[c],(q+3)*s,(o+.38)*s,260);
+      if(S.off[c]||S.auto[c]){x.font='500 13px Fredoka,sans-serif';x.fillText(S.off[c]?'🔌 sin conexión':'🤖 automático',(q+3)*s,(o+5.62)*s,260)}
+      x.shadowBlur=0;
     }else{x.fillStyle='#6a6196';x.font='500 16px Fredoka,sans-serif';x.fillText('libre',(q+3)*s,(o+3)*s)}}
   const cell=(r,kk,f)=>{x.beginPath();x.roundRect(kk*s+1.5,r*s+1.5,s-3,s-3,8);x.fillStyle=f;x.fill()};
   T.forEach(([r,kk],idx)=>{cell(r,kk,'#fff8ec');if(SAFE.has(idx)&&!ST.includes(idx)){x.fillStyle='#cdbb90';x.font='26px sans-serif';x.fillText('★',(kk+.5)*s,(r+.55)*s)}});
@@ -582,13 +661,13 @@ function frame(ms){
     list.sort((a,b)=>a.v.y-b.v.y);
     const mv=canPick()?movable(me):[];
     list.forEach(({c,i,v,ox,r})=>{
-      const can=c==me&&mv.includes(i),px=(v.x+ox)*SZ,py=v.y*SZ;let lift=v.hop*SZ;
+      const can=c==me&&mv.includes(i),px=(v.x+ox)*SZ+(v.wait>0&&v.big?Math.sin(t*70)*3:0),py=v.y*SZ;let lift=v.hop*SZ;
+      if(S.phase=='over'&&c==S.win)lift+=Math.abs(Math.sin(t*5+i*1.3))*SZ*.5;
       if(can){lift+=Math.abs(Math.sin(t*6+i))*SZ*.22;g.beginPath();g.ellipse(px,py+r*.8,r*1.1+Math.sin(t*6)*3,r*.45,0,0,7);g.lineWidth=4;g.strokeStyle='#fff';g.stroke();hits.push([px,py-r*.3,r*1.15,i])}
       pawn(px,py,r,COL[c],lift)});
+    if(S.phase=='over')drawWin(t);
     P.forEach(p=>{g.globalAlpha=Math.max(0,Math.min(1,p.l));g.fillStyle=p.c;g.beginPath();g.arc(p.x*SZ,p.y*SZ,p.s*SZ,0,7);g.fill()});g.globalAlpha=1;
     drawFx();
-    if(S.phase=='over'){g.fillStyle='#000a';g.fillRect(0,300,750,150);g.textAlign='center';g.textBaseline='middle';g.fillStyle=COL[S.win];g.font='700 56px Fredoka,sans-serif';
-      g.fillText('🏆 ¡Ganó '+S.seats[S.win]+'!',375,375,700)}
     timerUI();voiceUI(t);
   }
   requestAnimationFrame(frame);
@@ -599,12 +678,13 @@ requestAnimationFrame(frame);
 let sheetKind='';
 function sheetHtml(){
   if(sheetKind=='rules')return `<ol class="rules">
-   <li>Saca un <b>6</b> para sacar una ficha de la casa.</li>
+   <li>Toca el <b>dado</b> (aparece en tu casa) para tirarlo. Saca un <b>6</b> para sacar una ficha.</li>
    <li>Un <b>6</b>, comerte una ficha o llegar a la meta te da <b>otro turno</b>.</li>
    <li>Tres 6 seguidos: pierdes el turno.</li>
    <li>Las casillas con <b>★</b> son seguras: ahí no te pueden comer.</li>
    <li>Tienes <b>8 segundos</b> para tirar el dado y <b>5 segundos</b> para mover la ficha. Si se acaba el tiempo, el juego juega por ti.</li>
    <li>Tres tiempos agotados seguidos activan el modo automático 🤖. Si vuelves a jugar, se desactiva.</li>
+   <li>Toca 😜 en tu perfil para emojis con sonido y 🎁 en el perfil de un amigo para lanzarle regalos.</li>
    <li>Gana quien lleve sus 4 fichas a la meta.</li></ol>`;
   if(sheetKind=='emos')return `<div class="emos">${EMOS.map(e=>`<button class="alt em" data-k="${e}">${e}</button>`).join('')}</div>`;
   const opp=[0,1,2,3].filter(c=>S.seats[c]&&c!=me);
@@ -620,7 +700,7 @@ $('shc').onclick=e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.t!==undefined){tgt=+b.dataset.t;drawSheet();return}
   if(b.dataset.k===undefined)return;
   if(sheetKind=='gifts'){if(tgt>=0)sendOne(b.dataset.k,tgt)}else if(sheetKind=='emos')sendOne(b.dataset.k)};
-$('bGift').onclick=()=>openSheet('gifts');$('bEmo').onclick=()=>openSheet('emos');$('help').onclick=()=>openSheet('rules');
+$('help').onclick=()=>openSheet('rules');
 $('shx').onclick=closeSheet;$('bd').onclick=closeSheet;
 addEventListener('keydown',e=>{if(e.key=='Escape')closeSheet()});
 
@@ -629,23 +709,26 @@ let seatsHtml='';
 function render(){
   if($('game').hidden)return;diff();notify();
   const lobby=S.phase=='lobby',n=S.seats.filter(Boolean).length;
-  $('seats').dataset.x='';
   const html=S.seats.map((nm,c)=>{if(!nm)return '';
     const done=S.pcs[c].filter(x=>x==56).length,turn=!lobby&&S.turn==c&&S.phase!='over';
-    const sub=NAMES[c]+(c==0?' · 👑 anfitrión':'')+(c==me?' · tú':'')+(S.off[c]?' · 🔌 sin conexión':S.auto[c]?' · 🤖 automático':'');
+    const sub=NAMES[c]+(c==0?' · 👑':'')+(c==me?' · tú':'')+(S.off[c]?' · 🔌 sin conexión':S.auto[c]?' · 🤖 automático':'');
     const pips=lobby?'':'<span class="pips" title="Fichas en la meta">'+[0,1,2,3].map(k=>`<i class="${k<done?'d':''}"></i>`).join('')+'</span>';
+    const act=c==me?'<button class="act alt" type="button" data-e="1" aria-label="Enviar emoji">😜</button>':`<button class="act alt" type="button" data-g="${c}" aria-label="Regalar a ${esc(nm)}">🎁</button>`;
     const kb=isHost&&c!=me?`<button class="kick" type="button" data-k="${c}" aria-label="Expulsar a ${esc(nm)}">${S.off[c]?'Expulsar':'✕'}</button>`:'';
-    return `<div class="seat ${turn?'on':''} ${S.off[c]?'off':''}" data-s="${c}" style="--c:${COL[c]}"><span class="av">${esc((nm[0]||'?').toUpperCase())}</span><span class="nm"><b>${esc(nm)}</b><small>${esc(sub)}</small></span>${pips}${kb}</div>`}).join('');
+    return `<div class="seat ${turn?'on':''} ${S.off[c]?'off':''}" data-s="${c}" style="--c:${COL[c]}"><span class="av">${esc((nm[0]||'?').toUpperCase())}</span><span class="nm"><b>${esc(nm)}</b><small>${esc(sub)}</small></span>${pips}${act}${kb}</div>`}).join('');
   if(html!==seatsHtml){seatsHtml=html;$('seats').innerHTML=html}
-  const st=$('st');
+  const st=$('st'),mine=S.phase=='roll'&&S.turn==me;
   if(lobby)st.textContent=isHost?(n<2?'Esperando a tus amigos…':'¡Todo listo! Empieza cuando quieras'):'Esperando que el anfitrión empiece…';
   else if(S.phase=='over')st.textContent='🏆 ¡Ganó '+S.seats[S.win]+'!';
   else st.textContent=S.turn==me?'¡Es tu turno!':'Turno de '+S.seats[S.turn];
   st.style.color=lobby||S.phase=='over'?'':COL[S.turn];
   if(!rolling)face(lobby?0:shown);
-  $('msg').textContent=rolling?'🎲 …':canPick()?'Toca la ficha que quieres mover.':S.msg;
-  const mine=S.phase=='roll'&&S.turn==me;
-  $('roll').disabled=!mine||rolling;$('roll').hidden=lobby;$('dice').classList.toggle('ready',mine&&!rolling);
+  $('msg').textContent=rolling?'🎲 …':canPick()?'Toca la ficha que quieres mover.':mine?'👆 Toca el dado para tirar':S.msg;
+  $('roll').disabled=!mine||rolling;$('roll').hidden=lobby;
+  /* el dado vive dentro del tablero, en la casa del jugador con el turno */
+  const dc=$('dice'),[bo,bq]=BO[S.turn];
+  dc.style.left=(bq+3)/15*100+'%';dc.style.top=(bo+3)/15*100+'%';dc.style.borderColor=COL[S.turn];
+  dc.style.display=(lobby||S.phase=='over')?'none':'grid';dc.classList.toggle('ready',mine&&!rolling);
   $('start').hidden=!(isHost&&lobby);$('start').disabled=n<2;
   $('again').hidden=!(isHost&&S.phase=='over');
   const opp=[0,1,2,3].filter(c=>S.seats[c]&&c!=me);if(!opp.includes(tgt))tgt=opp.length?opp[0]:-1;
@@ -658,7 +741,10 @@ $('joinBtn').onclick=()=>{myName=$('name').value.trim()||'Jugador';saveName();er
 const saveName=()=>{try{localStorage.setItem('ludo_name',$('name').value.trim())}catch(x){}};
 $('roll').onclick=rollAction;$('dice').onclick=rollAction;
 $('start').onclick=startGame;$('again').onclick=startGame;
-$('seats').onclick=e=>{const b=e.target.closest('.kick');if(!b)return;const c=+b.dataset.k;
+$('seats').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.e){openSheet('emos');return}
+  if(b.dataset.g){tgt=+b.dataset.g;openSheet('gifts');return}
+  if(!b.classList.contains('kick'))return;const c=+b.dataset.k;
   if(S.off[c]||confirm('¿Expulsar a '+S.seats[c]+' de la sala?'))kick(c)};
 $('copy').onclick=()=>{const u=location.origin+location.pathname+'?sala='+code;
   (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast('🔗 Enlace copiado, mándaselo a tus amigos'),()=>prompt('Copia este enlace:',u))};
