@@ -250,51 +250,156 @@ const IMP={splash:()=>{noise(.5,.35,5000,800)},boom:()=>{noise(.9,.55,600,80);to
  splat:()=>{noise(.18,.4,900,300);tone(220,.18,'sine',.3,60)},
  frost:()=>{[1400,1900,2600].forEach((f,i)=>tone(f,.3,'triangle',.08,f*1.4,i*.05));noise(.25,.1,6000)},
  fire:()=>{noise(.8,.3,1800,400)},love:()=>[784,988,1319,1568].forEach((f,i)=>tone(f,.25,'triangle',.14,0,i*.08))};
-/* sonido propio de cada emoji, según la emoción que representa */
+
+/* ---------- Sonidos de emojis: VOCES ÉPICAS DE ANIME (gritos, risas, llantos) ---------- */
 const N=(f,d,t,v,to,dl)=>tone(f,d,t||'sine',v||.14,to||0,dl||0);
-const laugh=()=>[0,1,2,3,4,5].forEach(i=>{N(620-i*35,.08,'square',.07,400-i*20,i*.1);noise(.05,.06,2500,0,'bandpass',i*.1)});
-const ESND={
- '😂':laugh,'🤣':laugh,
- '😡':()=>{N(140,.6,'sawtooth',.2,70);N(147,.6,'sawtooth',.15,75);noise(.5,.22,900,200)},
- '😭':()=>[0,1,2,3].forEach(i=>{N(760-i*70,.26,'sine',.16,640-i*70,i*.3);N(1140-i*100,.2,'sine',.05,0,i*.3)}),
- '😎':()=>{N(196,.18,'triangle',.2);N(247,.18,'triangle',.2,0,.14);N(392,.5,'sine',.18,0,.3);N(98,.5,'sine',.3,0,.3)},
- '🥳':()=>{noise(.25,.2,3000,6000,'highpass');N(400,.4,'sawtooth',.08,800);[523,659,784,1047,1319].forEach((f,i)=>N(f,.16,'triangle',.15,0,.15+i*.06))},
- '😱':()=>{N(900,.8,'sawtooth',.1,2300);N(1350,.8,'square',.05,3300);noise(.6,.12,3000,6000,'highpass')},
- '🤯':()=>{N(200,.5,'sawtooth',.12,1800);noise(.9,.4,600,60,'lowpass',.5);N(80,.8,'sine',.5,30,.5)},
- '😏':()=>{N(311,.28,'triangle',.18,415);N(415,.34,'triangle',.18,311,.24)},
- '🥺':()=>{N(988,.25,'sine',.15,1175);N(1047,.45,'sine',.12,880,.26)},
- '😴':()=>[0,1].forEach(i=>{noise(.7,.18,300,120,'lowpass',i*.9);N(90,.7,'sine',.2,70,i*.9)}),
- '🤔':()=>{N(330,.2,'triangle',.18);N(311,.2,'triangle',.18,0,.22);N(440,.5,'triangle',.18,540,.45)},
- '🙄':()=>{N(300,.5,'sine',.18,900);N(900,.35,'sine',.15,300,.5)},
- '😈':()=>{N(196,1,'sawtooth',.1,185);N(233,1,'sawtooth',.08);N(294,1,'sawtooth',.06);[0,1,2].forEach(i=>N(330-i*30,.15,'square',.05,0,.5+i*.2))},
- '🤡':()=>{N(300,.09,'square',.2,500);N(500,.09,'square',.2,300,.11);N(400,.55,'sine',.15,1700,.25)},
- '👏':()=>[0,1,2,3,4,5,6,7].forEach(i=>noise(.06,.3,2200,0,'bandpass',i*.12+(i%2)*.02)),
- '❤️':()=>IMP.love(),
- '🔥':()=>IMP.fire(),
- '💀':()=>{N(220,.3,'sawtooth',.14,110);N(165,.4,'sawtooth',.14,70,.28);noise(.05,.3,1500,0,'bandpass',.75);noise(.05,.3,1800,0,'bandpass',.83)},
- '👍':()=>{N(523,.12,'triangle',.18);N(784,.32,'triangle',.18,0,.1)},
- '👎':()=>{N(300,.45,'sawtooth',.14,140);N(150,.5,'square',.07,100,.1)},
- '🙏':()=>{[523,659,784].forEach(f=>N(f,1.3,'sine',.1));N(1568,1,'sine',.04,0,.1)},
- '😇':()=>[1047,1319,1568,2093].forEach((f,i)=>N(f,.9,'sine',.07,0,i*.12)),
- '😬':()=>{N(466,.6,'sawtooth',.07);N(493,.6,'sawtooth',.07);noise(.45,.12,5000,0,'highpass')}};
-/* sonidos reales (grabaciones de la Biblioteca de sonidos de Google, licencia CC-BY 4.0).
-   Si un archivo no carga o el navegador no lo soporta, suena la versión sintetizada. */
-const SU='https://actions.google.com/sounds/v1/';
-const RS={'😂':'human_voices/man_laugh_and_knee_slap','🤣':'human_voices/male_chuckling','😡':'crowds/voices_angry','😭':'human_voices/male_dramatic_crying',
- '😎':'cartoon/instrument_strum','🥳':'crowds/battle_crowd_celebration','😱':'human_voices/death_impact_yell_single','🤯':'cartoon/crash_layer_cymbals',
- '😏':'cartoon/slide_whistle_up','🥺':'human_voices/baby_whine','😴':'human_voices/baby_sleep_breaths','🤔':'cartoon/woodblock_hit',
- '🙄':'cartoon/slide_whistle_rise_and_fall','😈':'crowds/battle_intimidation_forest','🤡':'cartoon/clown_horn','👏':'crowds/team_cheer',
- '❤️':'cartoon/xylophone_tip_toe_scale_up','💀':'human_voices/death_rattle_breath','👍':'cartoon/pop','👎':'cartoon/falling_whistle',
- '🙏':'cartoon/tympani_bing','😇':'cartoon/wind_chimes','😬':'cartoon/rubber_squeaking'};
-function emoSound(k){
-  if(!snd)return;let done=0;
-  const fb=()=>{if(done)return;done=1;(ESND[k]||(()=>{}))()},p=RS[k];
-  if(!p)return fb();
-  const a=new Audio(SU+p+'.ogg');a.volume=.9;a.onerror=fb;
-  a.play().catch(fb);
-  setTimeout(()=>{const iv=setInterval(()=>{a.volume=Math.max(0,a.volume-.15);if(a.volume<=0){clearInterval(iv);a.pause()}},60)},3300);
+
+/* Tus propios audios: pon aquí la ruta o enlace de un .mp3/.ogg para cualquier emoji.
+   Si el archivo falla o está vacío, suena la voz sintetizada de abajo.
+   Ejemplo:  '😱':'sonidos/grito.mp3',  '🔥':'https://tusitio.com/poder.mp3'  */
+const AUDIOS={};
+
+/* Sintetizador de VOZ: onda con formantes de vocal (a,o,u,e,i), vibrato y distorsión (grit) para gritos rotos */
+const FM={a:[800,1150,2900],o:[450,800,2830],u:[325,700,2530],e:[400,2000,2550],i:[270,2300,3010]};
+const CURVES={};
+function curva(k){if(CURVES[k])return CURVES[k];const c=new Float32Array(256);for(let i=0;i<256;i++){const x=i/128-1;c[i]=Math.tanh(x*(1+k*9))}return CURVES[k]=c}
+function voz(v,f0,f1,d,dl=0,vol=.3,vib=0,grit=0){
+  if(!snd||!AC)return;
+  const t=AC.currentTime+dl,o=AC.createOscillator();
+  o.type='sawtooth';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+d);
+  if(vib){const l=AC.createOscillator(),lg=AC.createGain();l.frequency.value=5.5+vib*1.5;lg.gain.value=f0*.035*vib;l.connect(lg);lg.connect(o.frequency);l.start(t);l.stop(t+d+.05)}
+  let src=o;
+  if(grit){const ws=AC.createWaveShaper();ws.curve=curva(grit);o.connect(ws);src=ws}
+  const mix=AC.createGain();mix.gain.value=5;
+  FM[v].forEach((f,i)=>{const b=AC.createBiquadFilter();b.type='bandpass';b.frequency.value=f;b.Q.value=7;const g=AC.createGain();g.gain.value=[1,.7,.4][i];src.connect(b);b.connect(g);g.connect(mix)});
+  const env=AC.createGain();
+  env.gain.setValueAtTime(.0001,t);env.gain.exponentialRampToValueAtTime(vol,t+Math.min(.06,d/3));
+  env.gain.setValueAtTime(vol,t+d*.65);env.gain.exponentialRampToValueAtTime(.0001,t+d);
+  mix.connect(env);env.connect(MG);env.connect(REV);o.start(t);o.stop(t+d+.05);
+  noise(Math.min(d,.25),vol*.35,2500,0,'highpass',dl); /* aire de la garganta */
 }
-const preloadSnd=()=>Object.values(RS).forEach(p=>{const a=new Audio(SU+p+'.ogg');a.preload='auto'});
+/* voz del dispositivo (solo para una frase suelta) */
+let JV=null;
+const loadVoices=()=>{try{JV=speechSynthesis.getVoices()}catch(x){JV=null}};
+try{loadVoices();speechSynthesis.onvoiceschanged=loadVoices}catch(x){}
+function hablar(txt,pitch=1.2,rate=.8,delay=0,lang='es-ES'){
+  if(!snd||!('speechSynthesis' in window))return;
+  setTimeout(()=>{try{const u=new SpeechSynthesisUtterance(txt);u.lang=lang;const vv=(JV||[]).find(x=>x.lang.startsWith(lang.slice(0,2)));if(vv)u.voice=vv;u.pitch=pitch;u.rate=rate;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(x){}},delay)}
+
+/* efectos de anime */
+const brillo=(dl=0)=>[1568,2093,2637,3136,4186].forEach((f,i)=>N(f,.28,'sine',.07,0,dl+i*.06));
+const gota=(dl=0)=>{N(900,.1,'sine',.16,1500,dl);N(1500,.14,'sine',.12,600,dl+.1)};
+const vena=(dl=0)=>{N(700,.07,'square',.12,1400,dl);N(1400,.1,'square',.1,500,dl+.07);noise(.08,.2,3000,0,'bandpass',dl)};
+const boing=(dl=0)=>{N(200,.3,'sine',.26,800,dl);N(800,.3,'sine',.2,240,dl+.28)};
+const dundun=(dl=0)=>[0,.32,.64].forEach(t=>{N(110,.5,'sawtooth',.18,70,dl+t);N(55,.5,'sine',.42,40,dl+t);noise(.15,.3,800,0,'lowpass',dl+t)});
+const doki=(dl=0)=>{N(70,.14,'sine',.6,45,dl);N(60,.18,'sine',.5,40,dl+.16)};
+const whoosh=(dl=0,d=.5)=>noise(d,.32,300,6000,'bandpass',dl);
+const tajan=(dl=0)=>[523,659,784,1047].forEach((f,i)=>N(f,.4,'triangle',.14,0,dl+i*.08));
+const tragedia=(dl=0)=>[392,370,349,330].forEach((f,i)=>N(f,.5,'triangle',.14,f*.96,dl+i*.35));
+const kiin=(dl=0)=>{N(2600,1.1,'sine',.1,2500,dl);N(5200,.8,'sine',.04,0,dl)};
+const campanita=(dl=0)=>[1319,1760,2349].forEach((f,i)=>N(f,.9,'sine',.1,0,dl+i*.12));
+const aplauso=(n=12,dl=0)=>{for(let i=0;i<n;i++)noise(.06,.3,2200,0,'bandpass',dl+i*.09+Math.random()*.04)};
+/* grito largo con capa una octava arriba para que suene grande */
+const grito=(f0,f1,d,dl=0,v='a',vol=.3,grit=.7)=>{voz(v,f0,f1,d,dl,vol,.7,grit);voz(v,f0*2,f1*2,d,dl,vol*.25,.7,grit*.6)};
+/* risa de anime: "¡JA! ¡JA! ¡JA! ¡JAAAAA!" */
+const risa=(f,n,dl=0,vol=.28,grit=.3,paso=.2)=>{for(let i=0;i<n;i++){const ff=f*(1-i*.03);voz('a',ff,ff*.8,.17,dl+i*paso,vol,0,grit)}
+  voz('a',f*.95,f*.55,1.2,dl+n*paso,vol*1.1,.9,grit);voz('o',f*1.9,f*1.1,1.2,dl+n*paso,vol*.25,.9,grit)};
+
+const ESND={
+ /* protagonista riendo de felicidad */
+ '😂':()=>{risa(340,4,0,.26,.1,.17);brillo(.9)},
+ /* risa épica de villano / jefe final */
+ '🤣':()=>{risa(190,5,0,.3,.5,.22);dundun(.1);N(45,2.2,'sine',.45,30,.1)},
+ /* protagonista furioso: grito de poder con aura */
+ '😡':()=>{whoosh(0,1.6);N(55,1.7,'sawtooth',.18,260);vena(.05);vena(.3);grito(190,560,1.5,.25,'a',.34);noise(.9,.45,700,60,'lowpass',1.5)},
+ /* La Llorona: lamento largo y fantasmal */
+ '😭':()=>{voz('a',520,780,.9,0,.22,1.2,.05);voz('a',790,370,1.5,.85,.22,1.4,.05);voz('i',720,430,1.3,2.2,.15,1.3);
+   noise(3.6,.05,1500,500,'bandpass');N(100,3.6,'sine',.08,70);hablar('¡Ay, mis hijos!',1.3,.65,900)},
+ /* sacando la katana con estilo */
+ '😎':()=>{noise(.45,.28,3000,9000,'highpass');N(4000,.5,'sine',.06,6500,.05);voz('o',120,95,.5,.5,.22,0,.3);kiin(.3);brillo(.7)},
+ /* grito de victoria */
+ '🥳':()=>{grito(300,430,.35,0,'a',.3,.4);grito(330,640,1.1,.35,'o',.32,.5);tajan(.5);brillo(.7);aplauso(10,.8)},
+ /* grito de terror */
+ '😱':()=>{grito(750,1600,1.4,0,'a',.3,.8);dundun(.05);noise(1,.15,5000,1500,'highpass')},
+ /* ¡¿QUÉEEE?! */
+ '🤯':()=>{voz('a',300,520,.35,0,.34,0,.8);grito(520,980,1,.3,'i',.32,.8);dundun(.1);N(45,1.4,'sine',.6,22,.1)},
+ /* risita confiada */
+ '😏':()=>{for(let i=0;i<4;i++)voz('u',230,200,.15,i*.23,.18,0,0);kiin(.8);N(311,.4,'triangle',.1,415,1)},
+ /* gemido tierno, ojos llorosos */
+ '🥺':()=>{voz('e',900,1020,.35,0,.14,1,0);voz('e',1020,780,.55,.4,.13,1.6,0);brillo(.2)},
+ /* ronquido */
+ '😴':()=>{[0,1.4].forEach(t=>{N(70,.9,'sawtooth',.12,115,t);noise(.9,.18,300,900,'lowpass',t);noise(.5,.12,900,250,'bandpass',t+.9)});brillo(2.6)},
+ /* mmm... pensando */
+ '🤔':()=>{voz('u',150,175,.9,0,.2,.6);voz('u',175,140,.7,.9,.2,.6);gota(1.7)},
+ /* suspiro */
+ '🙄':()=>{noise(1,.15,2500,600,'bandpass');voz('a',250,150,1,.1,.12);gota(.95)},
+ /* risa de villano oscuro: "KUKUKU... JAJAJAJAAA" */
+ '😈':()=>{for(let i=0;i<3;i++)voz('u',120,110,.14,i*.2,.2,0,.5);risa(105,4,.8,.34,.8,.26);dundun(.7);campanita(2.4)},
+ /* risa loca de comedia */
+ '🤡':()=>{for(let i=0;i<6;i++)voz('a',i%2?820:560,i%2?600:430,.14,i*.15,.2,0,.2);boing(.95);boing(1.4)},
+ /* aplausos con el público gritando */
+ '👏':()=>{aplauso(16);for(let i=0;i<5;i++)voz('o',210+Math.random()*90,280+Math.random()*60,1.1,.1+i*.05,.1,.5,.4);brillo(.4)},
+ /* enamorado: "¡kyaaa!" */
+ '❤️':()=>{voz('a',700,1100,.35,0,.2,0,.1);voz('a',900,1300,.5,.4,.2,.9,.1);doki(.1);doki(.7);brillo(.5)},
+ /* poder al máximo: transformación */
+ '🔥':()=>{whoosh(0,1.8);N(55,1.9,'sawtooth',.16,320);grito(130,320,1.7,.2,'o',.35,.8);kiin(.9);noise(.9,.5,800,60,'lowpass',1.6)},
+ /* gemido de muerte + trombón triste */
+ '💀':()=>{voz('u',115,55,1.9,0,.25,.4,.3);tragedia(.5);for(let i=0;i<10;i++)noise(.025,.3,1800+Math.random()*3000,0,'bandpass',1.6+i*.06)},
+ /* ¡YOSH! */
+ '👍':()=>{voz('o',200,270,.18,0,.32,0,.5);voz('e',270,320,.32,.18,.32,0,.5);brillo(.35);tajan(.25)},
+ /* desaprobación: "¡BAKAAA!" */
+ '👎':()=>{voz('a',270,210,.25,0,.3,0,.7);grito(210,90,.9,.25,'o',.3,.7);N(150,.5,'square',.1,70,.2)},
+ /* rezo con campanitas */
+ '🙏':()=>{voz('o',180,180,2.2,0,.18,.5);voz('o',270,270,2.2,.05,.12,.5);campanita(.4)},
+ /* coro celestial */
+ '😇':()=>{[523,659,784,1047].forEach((f,i)=>voz('a',f,f*1.01,2.3,i*.1,.1,1));brillo(.5)},
+ /* risa nerviosa */
+ '😬':()=>{[0,.22,.44].forEach((t,i)=>voz('a',420-i*30,360-i*30,.15,t,.12));gota(.8)}};
+/* ---------- Sonidos REALES (grabaciones) en capas, para que cada emoji suene espectacular ----------
+   Grabaciones de la Biblioteca de sonidos de Google (licencia CC-BY 4.0, https://developers.google.com/assistant/tools/sound-library).
+   Cada emoji mezcla 2 o 3 grabaciones: [archivo, retraso en segundos, volumen, velocidad].
+   Una velocidad menor a 1 vuelve el sonido más grave (por ejemplo, risa de villano).
+   Si no hay internet o un archivo falla, suena la versión sintetizada de arriba. */
+const GS='https://actions.google.com/sounds/v1/';
+const REAL={
+ '😂':[['human_voices/man_laugh_and_knee_slap'],['human_voices/male_chuckling',.8,.8]],
+ '🤣':[['human_voices/man_laugh_and_knee_slap',0,1,1.12],['human_voices/male_chuckling',.5,.9,1.25],['cartoon/slapping_three_faces',.9,.6]],
+ '😡':[['crowds/voices_angry'],['animals/dog_snarling',.1,.8],['impacts/pounding_on_dinner_table_series',.4,.9]],
+ '😭':[['human_voices/male_dramatic_crying'],['horror/hallow_wind',.2,.7],['animals/owl_hooting',1.6,.5]],
+ '😎':[['foley/lighter_flick'],['cartoon/instrument_strum',.5,.8],['sports/basketball_shot_swish',.9,.6]],
+ '🥳':[['crowds/battle_crowd_celebration'],['crowds/female_crowd_celebration',.25,.8],['crowds/team_cheer',.6,.8]],
+ '😱':[['human_voices/death_impact_yell_single'],['crowds/human_group_cry_out',.25,.8],['horror/ring_high_pitch',.1,.4]],
+ '🤯':[['human_voices/death_impact_yell_multiple'],['weapons/big_explosion_distant',.2,1],['impacts/glass_shatters_into_debris',.45,.8]],
+ '😏':[['cartoon/slide_whistle_up'],['human_voices/male_chuckling',.45,.8,.85]],
+ '🥺':[['human_voices/baby_whine'],['animals/small_dog_wimper_series',.4,.9]],
+ '😴':[['human_voices/human_breathing_nose'],['animals/cat_purr_close',.3,.7],['human_voices/baby_sleep_breaths',1.2,.6]],
+ '🤔':[['human_voices/male_clearing_throat'],['cartoon/woodblock_hit',.9,.9]],
+ '🙄':[['human_voices/human_breathing_mouth'],['cartoon/slide_whistle_rise_and_fall',.5,.7]],
+ '😈':[['crowds/battle_intimidation_forest'],['horror/monster_alien_growl_tense',.2,.8],['human_voices/male_chuckling',1,1,.55]],
+ '🤡':[['cartoon/clown_horn'],['cartoon/clown_slide_sound_effects',.5,.8],['human_voices/male_chuckling',1,.9,1.45]],
+ '👏':[['foley/hand_claps_close'],['crowds/team_cheer',.3,.8],['foley/hand_claps_medium',.8,.8]],
+ '❤️':[['cartoon/xylophone_tip_toe_scale_up'],['cartoon/wind_chimes',.4,.8],['human_voices/babies_coo',.9,.8]],
+ '🔥':[['foley/lighter_flick'],['weapons/gun_powder_ignite',.3,1],['weapons/explosion_hiss_bop_bang',.7,.9]],
+ '💀':[['human_voices/death_rattle_breath'],['horror/carcass_shake_rib_cage',.25,.9],['impacts/dirt_on_coffin_lid',1,.9]],
+ '👍':[['sports/fist_into_glove'],['crowds/team_cheer',.15,.7],['cartoon/pop',.5,.8]],
+ '👎':[['crowds/voices_moaning'],['cartoon/falling_whistle',.5,.8]],
+ '🙏':[['cartoon/wind_chimes'],['cartoon/tympani_bing',.3,.8]],
+ '😇':[['human_voices/babies_coo'],['cartoon/jingle_bells',.2,.6],['cartoon/wind_chimes',.8,.7]],
+ '😬':[['cartoon/rubber_squeaking'],['human_voices/male_cough',.35,.8],['cartoon/whistle_toy',.9,.5]]};
+function emoSound(k){
+  if(!snd)return;
+  const own=AUDIOS[k],layers=own?[[own]]:REAL[k];
+  let fb=0;const fall=()=>{if(!fb){fb=1;(ESND[k]||(()=>{}))()}};
+  if(!layers)return fall();
+  layers.forEach(([p,dl=0,vol=1,rate=1],i)=>setTimeout(()=>{
+    const a=new Audio(own?p:GS+p+'.ogg');a.volume=Math.min(1,vol);
+    a.preservesPitch=a.mozPreservesPitch=a.webkitPreservesPitch=false;a.playbackRate=rate;
+    if(i==0)a.onerror=fall;
+    a.play().catch(i==0?fall:()=>{});
+    setTimeout(()=>{const iv=setInterval(()=>{a.volume=Math.max(0,a.volume-.12);if(a.volume<=0){clearInterval(iv);a.pause()}},70)},3800);
+  },dl*1000));
+}
+const preloadSnd=()=>Object.values(REAL).forEach(L=>L.forEach(([p])=>{const a=new Audio(GS+p+'.ogg');a.preload='auto'}));
 /* música ambiental suave (opcional) */
 const CH=[[220,261.63,329.63],[174.61,220,261.63],[130.81,164.81,196],[196,246.94,293.66]];
 let mi=0,mt=0,mIv=0;
@@ -703,7 +808,7 @@ function sheetHtml(){
    <li>Tienes <b>15 segundos</b> para tirar el dado y <b>15 segundos</b> para mover la ficha. Si se acaba el tiempo, el juego juega por ti.</li>
    <li>Tres tiempos agotados seguidos activan el modo automático 🤖. Si vuelves a jugar, se desactiva.</li>
    <li>Toca 😜 en tu perfil para emojis con sonido y 🎁 en el perfil de un amigo para lanzarle regalos.</li>
-   <li>Gana quien lleve sus 4 fichas a la meta.</li></ol>`;
+   <li>Gana quien lleve sus 4 fichas a la meta.</li></ol><p style="margin:12px 0 0;font-size:12px;color:var(--mut)">Sonidos de emojis: grabaciones de la Biblioteca de sonidos de Google, licencia CC-BY 4.0.</p>`;
   if(sheetKind=='emos')return `<div class="emos">${EMOS.map(e=>`<button class="alt em" data-k="${e}">${e}</button>`).join('')}</div>`;
   const opp=[0,1,2,3].filter(c=>S.seats[c]&&c!=me);
   if(!opp.length)return '<small>Cuando entre alguien más podrás mandarle regalos.</small>';
